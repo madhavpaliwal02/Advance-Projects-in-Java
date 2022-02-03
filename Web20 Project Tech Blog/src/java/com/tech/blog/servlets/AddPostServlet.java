@@ -1,23 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package com.tech.blog.servlets;
 
-import com.tech.blog.dao.UserDao;
-import com.tech.blog.entities.Message;
+import com.tech.blog.dao.PostDao;
+import com.tech.blog.entities.Posts;
 import com.tech.blog.entities.User;
-import com.tech.blog.helper.ConnectionProvider;
-import java.io.IOException;
-import java.io.PrintWriter;
-import javax.servlet.*;
+import com.tech.blog.helper.*;
+import java.io.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.*;
 
-/**
- *
- * @author Nayan
- */
-public class LoginServlet extends HttpServlet {
+@MultipartConfig
+public class AddPostServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -33,48 +26,37 @@ public class LoginServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-
-            // Login page
             
-            // Check box
-            String check = request.getParameter("ckBox");
-
-            if (check == null) {
-                out.println("Please check the check-box");
-                response.sendRedirect("login_page.jsp");
-            } else {
-                // Database Connectivity
-                UserDao dao = new UserDao(ConnectionProvider.getCon());
-
-                // Fetching details from form
-                String email = request.getParameter("userEmail");
-                String pass = request.getParameter("userPass");
-
-                // Fetching details from database
-                User user = dao.getUserByEmailAndPassword(email, pass);
-
-                if (user == null) {
-                    Message msg = new Message("Invalid details, Please try again", "error", "alert-danger");
-                    
-                    HttpSession s = request.getSession();
-                    s.setAttribute("msg", msg);
-                    
-                    response.sendRedirect("login_page.jsp");
-                } else {
-                    HttpSession s = request.getSession();
-                    s.setAttribute("currentUser", user);
-                    response.sendRedirect("profile.jsp");
-                }
+            int cid = Integer.parseInt(request.getParameter("cid"));
+            String title = request.getParameter("title");
+            String content = request.getParameter("content");
+            String code = request.getParameter("code");
+            Part part = request.getPart("pic");
+            
+            /*out.println("Cid " + cid);
+            out.println("title " + title);
+            out.println("Content " + content);
+            out.println("code " + code);
+            out.println("pic " + pic);*/
+            
+            // getting user id
+            HttpSession s = request.getSession();
+            User user = (User) s.getAttribute("currentUser");
+            
+            // Adding details of posts to its object
+            Posts post = new Posts(cid, title, content, code, part.getSubmittedFileName(), user.getId());
+            
+            // Adding details to database
+            PostDao dao = new PostDao(ConnectionProvider.getCon());
+            
+            if(dao.addPost(post)){
+                String path = request.getRealPath("/") + "blog_pics" + File.separator + part.getSubmittedFileName();
+                Helper.saveFile(part.getInputStream(), path);
+                out.println("posted");
             }
-
-            out.println("</body>");
-            out.println("</html>");
+            else{
+                out.println("Unsuccessfull...");                
+            }
         }
     }
 

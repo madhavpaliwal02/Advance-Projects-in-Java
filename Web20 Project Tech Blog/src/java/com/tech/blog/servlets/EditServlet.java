@@ -1,23 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package com.tech.blog.servlets;
 
 import com.tech.blog.dao.UserDao;
 import com.tech.blog.entities.Message;
 import com.tech.blog.entities.User;
 import com.tech.blog.helper.ConnectionProvider;
+import com.tech.blog.helper.Helper;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.*;
 
-/**
- *
- * @author Nayan
- */
-public class LoginServlet extends HttpServlet {
+@MultipartConfig
+
+public class EditServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,42 +33,60 @@ public class LoginServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
+            out.println("<title>Servlet EditServlet</title>");
             out.println("</head>");
             out.println("<body>");
 
-            // Login page
-            
-            // Check box
-            String check = request.getParameter("ckBox");
+            // Fetching values from form
+            String name = request.getParameter("user_name");
+            String email = request.getParameter("user_email");
+            String pass = request.getParameter("user_pass");
+            String about = request.getParameter("user_about");
+            Part part = request.getPart("image");
+            String image = part.getSubmittedFileName();
 
-            if (check == null) {
-                out.println("Please check the check-box");
-                response.sendRedirect("login_page.jsp");
-            } else {
-                // Database Connectivity
-                UserDao dao = new UserDao(ConnectionProvider.getCon());
+            // Get the user from session
+            HttpSession s = request.getSession();
+            User u = (User) s.getAttribute("currentUser");
 
-                // Fetching details from form
-                String email = request.getParameter("userEmail");
-                String pass = request.getParameter("userPass");
+            u.setName(name);
+            u.setEmail(email);
+            u.setPassword(pass);
+            u.setAbout(about);
+            String oldFile = u.getProfile();
+            u.setProfile(image);
 
-                // Fetching details from database
-                User user = dao.getUserByEmailAndPassword(email, pass);
+            // Update the data of user in the database
+            UserDao dao = new UserDao(ConnectionProvider.getCon());
 
-                if (user == null) {
-                    Message msg = new Message("Invalid details, Please try again", "error", "alert-danger");
+            boolean flag = dao.editUser(u);
+
+            if (flag) {
+
+                String path = request.getRealPath("/") + "pics" + File.separator + u.getProfile();
+                
+                String pathOldFile = request.getRealPath("/") + "pics" + File.separator + oldFile;
+                
+                Helper.deleteFile(pathOldFile);
+                
+                if (Helper.saveFile(part.getInputStream(), path)) {
                     
-                    HttpSession s = request.getSession();
+                    out.println("Profile updated...");
+                    Message msg = new Message("Profile Updated...", "success", "alert-success");
                     s.setAttribute("msg", msg);
-                    
-                    response.sendRedirect("login_page.jsp");
-                } else {
-                    HttpSession s = request.getSession();
-                    s.setAttribute("currentUser", user);
-                    response.sendRedirect("profile.jsp");
+                } 
+                else {
+                    out.println("not updated...");
+                    Message msg = new Message("Something went wrong...", "error", "alert-danger");
+                    s.setAttribute("msg", msg);
                 }
+            } else {
+                out.println("not updated...");
+                Message msg = new Message("Something went wrong...", "error", "alert-danger");
+                s.setAttribute("msg", msg);
             }
+            
+            response.sendRedirect("profile.jsp");
 
             out.println("</body>");
             out.println("</html>");

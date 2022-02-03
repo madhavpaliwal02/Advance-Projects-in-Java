@@ -3,12 +3,12 @@ package com.tech.blog.entities;
 import java.sql.*;
 
 public class User {
-    
-    
+
     private int id;
-    private String name, email, password, gender, about;
+    private String name, email, password, gender, about, profile;
+
     private Timestamp dateTime;
-    
+
     // Constructors
     public User() {
     }
@@ -29,7 +29,6 @@ public class User {
     }
 
     // Getters & Setters
-
     public int getId() {
         return id;
     }
@@ -85,7 +84,13 @@ public class User {
     public void setDateTime(Timestamp dateTime) {
         this.dateTime = dateTime;
     }
-    
-    
-    
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
 }
