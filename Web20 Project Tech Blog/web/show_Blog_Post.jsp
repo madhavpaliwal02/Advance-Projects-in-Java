@@ -7,6 +7,7 @@
 <%@page import="com.tech.blog.helper.ConnectionProvider"%>
 <%@page import="com.tech.blog.dao.PostDao"%>
 <%@page import="com.tech.blog.entities.User"%>
+<%--<%@page import="" %>--%>
 <%@page errorPage="error_page.jsp" %>
 
 <!--Validating user-->
@@ -158,7 +159,7 @@
                                             <%= ud.getUserByUserId(p.getuId()).getName()%> </a>!</p>
                                 </div>
                                 <div class="col-md-4">
-                                    <p class="post-date" > <%= DateFormat.getDateTimeInstance().format(p.getpDate()) %> </p>
+                                    <p class="post-date" > <%= DateFormat.getDateTimeInstance().format(p.getpDate())%> </p>
                                 </div>
                             </div>
                             <p class="post-content" > <%= p.getpContent()%> </p>
@@ -172,7 +173,8 @@
 
                         <div class="card-footer">
 
-                            <a href="#!" class="btn btn-outline-primary btn-sm">
+                            <a href="#!" onclick="doLike(<%= p.getpId()%>, <%= user.getId()%>)" 
+                               class=" btn btn-outline-primary btn-sm">
                                 <i class="fa fa-thumbs-o-up"></i>   <span>10</span>
                             </a>
                             <a href="#!" class="btn btn-outline-primary btn-sm">
@@ -384,6 +386,7 @@
 
         <!--End Of Post Modal-->
 
+        <script src="JS/newjs.js" type="text/javascript"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
@@ -395,27 +398,27 @@
 
         <!--Profile Edit-->
         <script>
-            $(document).ready(function () {
-                let editStatus = false;
+                                $(document).ready(function () {
+                                    let editStatus = false;
 
-                $('#edit-profile-button').click(function () {
+                                    $('#edit-profile-button').click(function () {
 
-                    if (editStatus == false) {
-                        $("#profile-details").hide()
+                                        if (editStatus == false) {
+                                            $("#profile-details").hide()
 
-                        $("#profile-edit").show();
-                        editStatus = true;
-                        $(this).text("Back")
-                    } else {
-                        $("#profile-details").show()
+                                            $("#profile-edit").show();
+                                            editStatus = true;
+                                            $(this).text("Back")
+                                        } else {
+                                            $("#profile-details").show()
 
-                        $("#profile-edit").hide()
-                        editStatus = false;
-                        $(this).text("Edit")
-                    }
+                                            $("#profile-edit").hide()
+                                            editStatus = false;
+                                            $(this).text("Edit")
+                                        }
 
-                })
-            });
+                                    })
+                                });
 
         </script>
 

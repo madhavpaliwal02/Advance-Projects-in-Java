@@ -12,10 +12,13 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Nayan/Documents/NetBeansProjects/Web20%20Project%20Tech%20Blog/src/java/com/tech/blog/servlets/AddPostServlet.java</file>
+            <file>file:/C:/Users/Nayan/Documents/NetBeansProjects/Web20%20Project%20Tech%20Blog/src/java/com/tech/blog/servlets/LikeServlet.java</file>
+            <file>file:/C:/Users/Nayan/Documents/NetBeansProjects/Web20%20Project%20Tech%20Blog/web/show_Blog_Post.jsp</file>
+            <file>file:/C:/Users/Nayan/Documents/NetBeansProjects/Web20%20Project%20Tech%20Blog/src/java/com/tech/blog/dao/LikeDao.java</file>
+            <file>file:/C:/Users/Nayan/Documents/NetBeansProjects/Web20%20Project%20Tech%20Blog/web/JS/newjs.js</file>
+            <file>file:/C:/Users/Nayan/Documents/NetBeansProjects/Web20%20Project%20Tech%20Blog/src/java/com/tech/blog/dao/UserDao.java</file>
             <file>file:/C:/Users/Nayan/Documents/NetBeansProjects/Web20%20Project%20Tech%20Blog/src/java/com/tech/blog/dao/PostDao.java</file>
             <file>file:/C:/Users/Nayan/Documents/NetBeansProjects/Web20%20Project%20Tech%20Blog/web/profile.jsp</file>
-            <file>file:/C:/Users/Nayan/Documents/NetBeansProjects/Web20%20Project%20Tech%20Blog/src/java/com/tech/blog/entities/Posts.java</file>
         </group>
     </open-files>
 </project-private>

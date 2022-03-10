@@ -29,6 +29,11 @@
             .banner-background{
                 clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
             }
+            body{
+                background: url(image/download.jpg);
+                background-size: cover;
+                background-attachment: fixed;
+            }
         </style>
     </head>
     <body>
@@ -107,7 +112,10 @@
                     <div class="col-md-4">
                         <!--Categories-->
                         <div class="list-group">
-                            <a href="#" class="list-group-item list-group-item-action active">All Posts</a>
+                            <a href="#" onclick="getPosts(0, this)" class=" c-link list-group-item list-group-item-action active">
+                                All Posts
+                            </a>
+                            <!--Categories-->
                             <%
                                 PostDao dao = new PostDao(ConnectionProvider.getCon());
                                 ArrayList<Categories> list2 = dao.getCategories();
@@ -115,8 +123,8 @@
                                 for (Categories cat : list2) {
                             %>
 
-                            <a href="#" class="list-group-item list-group-item-action"> 
-                                <%= cat.getName() %>
+                            <a href="#" onclick="getPosts(<%= cat.getCid()%>, this)" class=" c-link list-group-item list-group-item-action"> 
+                                <%= cat.getName()%>
                             </a>
 
                             <%
@@ -129,6 +137,16 @@
                     <!--Second col-->
                     <div class="col-md-8">
                         <!--Posts-->
+                        <div class="container text-center" id="loader">
+                            <i class="fa fa-refresh fa-3x fa-spin"></i>
+                            <h3 class="mt-2">Loading...</h3>
+                        </div>
+
+                        <div class="container-fluid" id="post-container">
+
+                        </div>
+
+
 
 
                     </div>
@@ -136,8 +154,11 @@
             </div>
         </main>
 
+        <!--End of the Main Body-->
+
+
         <!--Profile modal-->
-        <!-- Modal -->
+
         <div class="modal fade" id="profile-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -321,28 +342,30 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+        <!--Profile Edit-->
         <script>
-            $(document).ready(function () {
-                let editStatus = false;
+                                $(document).ready(function () {
+                                    let editStatus = false;
 
-                $('#edit-profile-button').click(function () {
+                                    $('#edit-profile-button').click(function () {
 
-                    if (editStatus == false) {
-                        $("#profile-details").hide()
+                                        if (editStatus == false) {
+                                            $("#profile-details").hide()
 
-                        $("#profile-edit").show();
-                        editStatus = true;
-                        $(this).text("Back")
-                    } else {
-                        $("#profile-details").show()
+                                            $("#profile-edit").show();
+                                            editStatus = true;
+                                            $(this).text("Back")
+                                        } else {
+                                            $("#profile-details").show()
 
-                        $("#profile-edit").hide()
-                        editStatus = false;
-                        $(this).text("Edit")
-                    }
+                                            $("#profile-edit").hide()
+                                            editStatus = false;
+                                            $(this).text("Edit")
+                                        }
 
-                })
-            });
+                                    })
+                                });
 
         </script>
 
@@ -367,8 +390,9 @@
                             console.log(data)
                             if (data.trim() == 'posted') {
                                 swal("Good job!", "Saved Successfully", "success");
+                                $("#add-post-form").hide();
                             } else {
-                                swal("Error!", "Something went wrong, try again...", "success");
+                                swal("Error!", "Something went wrong, try again...", "error");
                             }
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
@@ -382,6 +406,38 @@
                 })
             })
         </script>
+
+
+        <!--Loading post using ajax-->
+        <script>
+            function getPosts(catId, obj) {
+                $("#loader").show();
+                $("#post-container").hide()
+
+                $(".c-link").removeClass('active')
+
+                $.ajax({
+                    url: "load_posts.jsp",
+                    data: {cid: catId},
+                    success: function (data, textStatus, jqXHR) {
+                        console.log(data);
+
+                        $("#loader").hide();
+                        $("#post-container").show();
+                        $('#post-container').html(data)
+                        $(obj).addClass('active')
+                    }
+                })
+            }
+
+            $(document).ready(function (e) {
+
+                let allPostRef = $('.c-link') [0]
+                getPosts(0, allPostRef)
+
+
+            })
+        </script>        
 
     </body>
 </html>
